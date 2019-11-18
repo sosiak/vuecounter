@@ -1,15 +1,17 @@
 <template>
   <div class="counter">
-    <div class="counter__time days">{{convertValue().days}}</div>
-    <div class="counter__time hours">{{convertValue().hours}}</div>
-    <div class="counter__time minutes">{{convertValue().minutes}}</div>
-    <div class="counter__time seconds">{{convertValue().seconds}}</div>
+    <div class="counter__time days">{{values.days}}</div>
+    <div class="counter__time hours">{{values.hours}}</div>
+    <div class="counter__time minutes">{{values.minutes}}</div>
+    <div class="counter__time seconds">{{values.seconds}}</div>
     <div class="destination-time">
       <h1 class="destination-time__title">Data</h1>
       <input
         id="time-input"
         type="datetime-local"
         value="2019-12-15T20:00:00"
+        min-value="2000-01-01T00:00"
+        max-value="2099-12-31T23:59"
         class="destination-time__input"
         v-model="title"
       />
@@ -23,55 +25,59 @@ export default {
   name: "Counter",
   data() {
     return {
-      title: "2019-12-15T20:00"
+      title: "2019-12-15T20:00",
+      values: {
+        days: "",
+        hours: "",
+        minutes: "",
+        seconds: ""
+      }
     };
   },
   methods: {
-    value: function inputValue() {
-      return new Date(this.title).getTime();
-    },
-    calcValue: function calculateToListItem() {
-      const end = this.value();
-      const start = new Date().getTime();
-      return end - start;
-    },
-    convertValue: function convertToTimeValues() {
-      let value = this.calcValue();
-      let values = {
-        days: Math.floor(value / 86400000),
-        hours: Math.floor(
-          (value - Math.floor(value / 86400000) * 86400000) / 3600000
-        ),
-        minutes: Math.floor(
-          (value -
-            Math.floor(value / 86400000) * 86400000 -
-            Math.floor(
-              (value - Math.floor(value / 86400000) * 86400000) / 3600000
-            ) *
-              3600000) /
-            60000
-        ),
-        seconds: Math.floor(
-          (value -
-            Math.floor(value / 86400000) * 86400000 -
-            Math.floor(
-              (value - Math.floor(value / 86400000) * 86400000) / 3600000
-            ) *
-              3600000 -
-            Math.floor(
-              (value -
-                Math.floor(value / 86400000) * 86400000 -
-                Math.floor(
-                  (value - Math.floor(value / 86400000) * 86400000) / 3600000
-                ) *
-                  3600000) /
-                60000
-            ) *
-              60000) /
-            1000
-        )
-      };
-      return values;
+    value: function() {},
+    calcValue: function() {
+      let self = this;
+      setInterval(function() {
+        let currentDate = new Date(self.title).getTime();
+        let end = currentDate;
+        let start = new Date().getTime();
+        let value = end - start;
+        self.values = {
+          days: Math.floor(value / 86400000),
+          hours: Math.floor(
+            (value - Math.floor(value / 86400000) * 86400000) / 3600000
+          ),
+          minutes: Math.floor(
+            (value -
+              Math.floor(value / 86400000) * 86400000 -
+              Math.floor(
+                (value - Math.floor(value / 86400000) * 86400000) / 3600000
+              ) *
+                3600000) /
+              60000
+          ),
+          seconds: Math.floor(
+            (value -
+              Math.floor(value / 86400000) * 86400000 -
+              Math.floor(
+                (value - Math.floor(value / 86400000) * 86400000) / 3600000
+              ) *
+                3600000 -
+              Math.floor(
+                (value -
+                  Math.floor(value / 86400000) * 86400000 -
+                  Math.floor(
+                    (value - Math.floor(value / 86400000) * 86400000) / 3600000
+                  ) *
+                    3600000) /
+                  60000
+              ) *
+                60000) /
+              1000
+          )
+        };
+      }, 1000);
     }
   }
 };
